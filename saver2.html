@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Platformer</title>
+</head>
+<body>
+  <style>
+        .health-bar {
+  width: 20px; /* Define the total width */
+  height: 200px;
+  background: #ddd; /* Background color (e.g., light gray for empty part) */
+  border-radius: 5px;
+  overflow: hidden; /* Ensures the inner bar stays within rounded corners */
+}
+
+.bar {
+  background: #c54; /* Color of the health (e.g., red) */
+  width: 100%; /* Initial width (full health) */
+  height: 100%;
+  transition: width 0.5s linear; /* Smooth transition when width changes */
+  </style>
+<canvas id = "game" width = "1890" height="900" style="background-image: url('moonground.jpg'); background-repeat: no-repeat;background-size: 1890px 900px;">
+
+</canvas>
+
+</body>
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+let keys = {};
+const gravity = 0.5;
+const ground_level=850;
+
+  document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+const sprite1 = new Image();
+sprite1.src = "yammamotopxel.png"; // Sprite sheet
+
+const sprite2 = new Image();
+sprite2.src = "yammamotopxel.png"; // Sprite sheet
+
+    const SPRITE_WIDTH = 170;   // width of ONE frame
+  const SPRITE_HEIGHT = 255;  // height of ONE frame
+  const FRAMES_PER_ROW = 5;
+
+   //PLAYER 1
+const player1 = {
+  x: 50,
+  y: 300,
+  width: 170,
+  height: 255,
+  vx: 0,
+  vy: 0,
+  speed: 7.5,
+  jump: 20,
+  frameX: 0,
+  frameY: 0,
+  frameTick: 0,
+  grounded: false,
+  isKicking: false,
+  kickFrame: 0,
+  kickTick: 0,
+  maxHealth:100,
+  currentHealth:20,
+  x_bar:10,
+  y_bar:10,
+  max_heigth_bar:800,
+  width_bar:20,
+};
+
+const player2 = {
+  x: 400,
+  y: 300,
+  width: 170,
+  height: 255,
+  vx: 0,
+  vy: 0,
+  speed: 10,
+  jump: 20,
+  frameX: 0,
+  frameY: 1,
+  frameTick: 0,
+  grounded: false,
+  isKicking: false,
+  kickFrame: 0,
+  kickTick: 0,
+  maxHealth:100,
+  currentHealth:20,
+  x_bar:1800,
+  y_bar:10,
+  max_heigth_bar:800,
+  width_bar:20,
+};
+
+function update(){
+  let moving1 = false;
+
+  let moving2 = false;
+
+  // Movement player 1
+  if (keys["a"]) {
+    player1.vx = -player1.speed;
+    player1.frameY=1;
+    moving1 = true;
+  }
+  else if (keys["d"]){
+  player1.vx = player1.speed;
+  player1.frameY=0;
+  moving1 = true;
+}
+  else player1.vx = 0;
+
+  if (keys["w"] && player1.grounded) {
+    player1.vy = -player1.jump;
+    player1.grounded = false;
+  }
+  //gravty
+  player1.vy += gravity;
+//change framex
+if (moving1) {
+    player1.frameTick++;
+    if (player1.frameTick > 10) {
+      player1.frameX = (player1.frameX + 1) % FRAMES_PER_ROW;
+      player1.frameTick = 0;
+    }
+  } else {
+    player1.frameX = 0; // idle frame
+  }
+ // Apply movement
+  player1.x += player1.vx;
+  player1.y += player1.vy;
+  player1.grounded = false;
+
+      // Land on top
+      if (player1.vy > 0 && player1.y + player1.height>=ground_level) {
+        player1.y = ground_level-player1.height;
+        player1.vy = 0;
+        player1.grounded = true;
+      }
+
+      // Kick player1
+  // Trigger Kick
+if (keys["f"] && !player1.isKicking) {
+  console.log("kick1");
+    player1.isKicking = true;
+    player1.kickFrame = 0;
+    player1.kickTick = 0;
+    if (player1.frameY==0){player1.frameY=4};
+    if (player1.frameY==1){player1.frameY=5};
+    if (player2.x<player1.x+player1.width&&player2.x+player2.width>player1.x&&player2.y<player1.y+player1.height&&player2.y+player2.height>player1.y){
+      player2.currentHealth-=5;
+    }
+}
+
+// Kick Animation Logic
+if (player1.isKicking) {
+    player1.kickTick++;
+    
+    // Change frame every 10 ticks
+    if (player1.kickTick > 10) {
+        player1.kickFrame++;
+        player1.kickTick = 0;
+    }
+
+    // After 2 frames, stop kicking
+    if (player1.kickFrame > 1) {
+        player1.isKicking = false;
+        player1.kickFrame = 0;
+         if (player1.frameY==4){player1.frameY=0};
+        if (player1.frameY==5){player1.frameY=1};
+      }
+}
+
+  // Movement player 2
+  if (keys["ArrowLeft"]) {
+    player2.vx = -player2.speed;
+    player2.frameY=1;
+    moving2 = true;
+  }
+  else if (keys["ArrowRight"]){
+  player2.vx = player2.speed;
+  player2.frameY=0;
+  moving2 = true;
+}
+  else player2.vx = 0;
+
+  if (keys["ArrowUp"] && player2.grounded) {
+    player2.vy = -player2.jump;
+    player2.grounded = false;
+  }
+  //gravty
+  player2.vy += gravity;
+//change framex
+if (moving2) {
+    player2.frameTick++;
+    if (player2.frameTick > 10) {
+      player2.frameX = (player2.frameX + 1) % FRAMES_PER_ROW;
+      player2.frameTick = 0;
+    }
+  } else {
+    player2.frameX = 0; // idle frame
+  }
+ // Apply movement
+  player2.x += player2.vx;
+  player2.y += player2.vy;
+  player2.grounded = false;
+
+      // Land on top
+      if (player2.vy > 0 && player2.y + player2.height>=ground_level) {
+        player2.y = ground_level-player2.height;
+        player2.vy = 0;
+        player2.grounded = true;
+      }
+            // Kick player2
+  // Trigger Kick
+if (keys["/"] && !player2.isKicking) {
+  console.log("kick2");
+    player2.isKicking = true;
+    player2.kickFrame = 0;
+    player2.kickTick = 0; 
+    if (player2.frameY==0){player2.frameY=4};
+    if (player2.frameY==1){player2.frameY=5}
+      if (player2.x<player1.x+player1.width&&player2.x+player2.width>player1.x&&player2.y<player1.y+player1.height&&player2.y+player2.height>player1.y){
+      player1.currentHealth-=5;
+    }
+}
+
+// Kick Animation Logic
+if (player2.isKicking) {
+    player2.kickTick++;
+    
+    // Change frame every 10 ticks
+    if (player2.kickTick > 10) {
+        player2.kickFrame++;
+        player2.kickTick = 0;
+    }
+
+    // After 2 frames, stop kicking
+    if (player2.kickFrame > 1) {
+        player2.isKicking = false;
+        player2.kickFrame = 0;
+        if (player2.frameY==4){player2.frameY=0};
+        if (player2.frameY==5){player2.frameY=1}
+    }
+  if (player1.currentHealth<=0) {window.location.href = "thefightinggameS.html";}
+  if (player2.currentHealth<=0) {window.location.href = "thefightinggameS.html";}
+}
+
+  }
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // --- PLAYER 1 DRAW LOGIC ---
+  let s1x = player1.frameX * SPRITE_WIDTH;
+  let s1y = player1.frameY * SPRITE_HEIGHT;
+
+  // --- PLAYER 2 DRAW LOGIC ---
+  let s2x = player2.frameX * SPRITE_WIDTH;
+  let s2y = player2.frameY * SPRITE_HEIGHT;
+
+  // Check if player is kicking to override the frames
+  if (player1.isKicking) {
+      s1x = player1.kickFrame * SPRITE_WIDTH; 
+  }
+  if (player2.isKicking) {
+      s2x = player2.kickFrame * SPRITE_WIDTH; 
+  }
+  ctx.drawImage(
+      sprite1,
+      s1x, s1y, SPRITE_WIDTH, SPRITE_HEIGHT,
+      player1.x, player1.y, player1.width, player1.height
+  );
+
+  ctx.drawImage(
+      sprite2,
+      s2x, s2y, SPRITE_WIDTH, SPRITE_HEIGHT,
+      player2.x, player2.y, player2.width, player2.height
+  );
+
+    ctx.fillStyle = "grey";
+ ctx.fillRect(player1.x_bar,player1.y_bar,player1.width_bar,player1.max_heigth_bar);
+ ctx.fillRect(player2.x_bar,player2.y_bar,player2.width_bar,player2.max_heigth_bar);
+
+ ctx.fillStyle = "green";
+ ctx.fillRect(player1.x_bar,player1.y_bar,player1.width_bar,player1.currentHealth/player1.maxHealth*player1.max_heigth_bar);
+ ctx.fillRect(player2.x_bar,player2.y_bar,player2.width_bar,player2.currentHealth/player2.maxHealth*player2.max_heigth_bar);
+}
+
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+
+</script>
+</html>

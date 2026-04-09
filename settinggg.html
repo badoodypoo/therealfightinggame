@@ -1,0 +1,30 @@
+<body>
+	<table>
+		
+		<tr> 
+			<td> <img src="POSERR.png" id="character1img"> <br> <h2 id="character1"> Yamamoto </h2> </td>
+			<td> <div id="menu">
+		<h1> <img src="vS.png"> </h1><br> 
+		<button onclick="chooseyourfighter(0)">a</button>
+		<button onclick="chooseyourfighter(1)">b</button>
+		<button>c</button>
+		<button>d</button>
+		<button>e</button>
+		<button>f</button>
+		
+	</div> </td>
+	<td> <img src="POSE.png" id="character2img"> <br> <h2 id="character2"> TRON </h2> </td>
+		
+		</tr>
+		</table>
+	
+</body>
+<script>
+	var names=["Yamamoto","TRON","Rodrique","DA-Silva","MR Khan","Phrank"]
+	function chooseyourfighter(char_num) {
+		document.getElementById("character1").innerHTML=names[char_num];
+
+		// body...
+	}
+</script>
+</html>

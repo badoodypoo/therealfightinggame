@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="thefightgamE.css">
+
+	<style>
+		#confirmLeft {
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			padding: 10px 20px;
+			font-size: 16px;
+		}
+
+		#confirmRight {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			padding: 10px 20px;
+			font-size: 16px;
+		}
+
+		/* ✅ START button in the middle */
+		#startBtn {
+			position: fixed;
+			bottom: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			padding: 12px 30px;
+			font-size: 18px;
+			background-color: green;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+	<table>
+		<tr>
+			<td>
+				<img src="box.png" id="character1img">
+				<br>
+				<h2 id="character1"> Choose your Fighter </h2>
+			</td>
+
+			<td>
+				<div id="menu">
+					<h1><img src="VERSUS.png" width="300px"></h1><br>
+					<button onclick="chooseyourfighter(0)">a</button>
+					<button onclick="chooseyourfighter(1)">b</button>
+					<button onclick="chooseyourfighter(2)">c</button>
+					<button onclick="chooseyourfighter(3)">d</button>
+					<button onclick="chooseyourfighter(4)">e</button>
+					<button onclick="chooseyourfighter(5)">f</button>
+				</div>
+			</td>
+
+			<td>
+				<img src="box.png" id="character2img">
+				<br>
+				<h2 id="character2"> Choose your Fighter </h2>
+			</td>
+		</tr>
+	</table>
+
+	<!-- Confirm buttons -->
+	<button id="confirmLeft" onclick="confirmSelection(1)">Confirm</button>
+	<button id="confirmRight" onclick="confirmSelection(2)" disabled>Confirm</button>
+
+	<!-- ✅ START button -->
+	<button id="startBtn" onclick="startGame()" disabled>START</button>
+
+</body>
+
+<script>
+	var names = ["Yamamoto", "TRON", "Rodrique", "DA-Silva", "MR Khan", "Phrank"];
+	var images = ["POSERR.png", "TRON.png", "Rodrigue.png", "Da-Silva.png", "MRKhan.png", "Phrank.png"];
+
+	var selected1 = null;
+	var selected2 = null;
+
+	var confirmed1 = false;
+	var confirmed2 = false;
+
+	var currentPlayer = 1;
+
+	function chooseyourfighter(char_num) {
+		if (currentPlayer === 1) {
+			selected1 = char_num;
+			document.getElementById("character1").innerHTML = names[char_num];
+			document.getElementById("character1img").src = images[char_num];
+		} else if (currentPlayer === 2) {
+			selected2 = char_num;
+			document.getElementById("character2").innerHTML = names[char_num];
+			document.getElementById("character2img").src = images[char_num];
+		}
+	}
+
+	function confirmSelection(player) {
+		if (player === 1 && selected1 !== null && currentPlayer === 1) {
+			alert("Player 1 confirmed: " + names[selected1]);
+			confirmed1 = true;
+
+			currentPlayer = 2;
+			document.getElementById("confirmRight").disabled = false;
+		}
+
+		else if (player === 2 && selected2 !== null && currentPlayer === 2) {
+			alert("Player 2 confirmed: " + names[selected2]);
+			confirmed2 = true;
+		}
+
+		// ✅ Enable START if both confirmed
+		if (confirmed1 && confirmed2) {
+			document.getElementById("startBtn").disabled = false;
+		}
+	}
+
+	function startGame() {
+		if (confirmed1 && confirmed2) {
+			alert("FIGHT!\n" + names[selected1] + " VS " + names[selected2]);
+		}
+	}
+
+	function startGame() {
+		if (confirmed1 && confirmed2) {
+			alert("FIGHT!\n" + names[selected1] + " VS " + names[selected2]);
+			
+			// ADDED: This sends you to the game page after you click 'OK' on the alert
+			window.location.href = "saver67.html";
+		}
+	}
+
+</script>
+
+</html>
